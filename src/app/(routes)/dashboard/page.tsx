@@ -107,7 +107,7 @@ function DashboardPage() {
   useEffect(() => {
     const isAdmin = localStorage.getItem("isAdmin");
     if (!isAdmin) {
-      router.push("/sign");
+      router.push("/signin");
     }
 
     const storedAttendance = JSON.parse(
