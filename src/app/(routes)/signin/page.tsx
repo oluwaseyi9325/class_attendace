@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 
-function page() {
+function SignInPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -52,4 +52,4 @@ function page() {
   )
 }
 
-export default page
+export default SignInPage
