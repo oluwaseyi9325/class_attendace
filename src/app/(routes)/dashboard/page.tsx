@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Swal from 'sweetalert2';
 
 function DashboardPage() {
   type Student = {
@@ -116,14 +117,33 @@ function DashboardPage() {
     setAttendance(storedAttendance);
   }, [router]);
 
-  const registerAttendance = (studentId: number) => {
-    const today = new Date().toISOString().split("T")[0];
-    const newAttendance = { ...attendance, [studentId]: today };
 
-    setAttendance(newAttendance);
-    localStorage.setItem("attendance", JSON.stringify(newAttendance));
-    alert("Student has been registered");
-  };
+const registerAttendance = (studentId: number) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to register this student.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, register it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const today = new Date().toISOString().split('T')[0];
+                const newAttendance = { ...attendance, [studentId]: today };
+
+                setAttendance(newAttendance);
+                localStorage.setItem('attendance', JSON.stringify(newAttendance));
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Registered',
+                    text: 'Student has been registered',
+                });
+            }
+        });
+    };
+
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -145,12 +165,15 @@ function DashboardPage() {
             {students.map((student) => (
               <tr key={student.id}>
                 <td className="py-2 px-4 border-b">
-                  <Image
-                    src={student.picture}
-                    alt={student.fullname}
-                    className="w-12 h-12 rounded-full"
-                  />
-                </td>
+    <Image
+        src={student.picture}
+        alt={student.fullname}
+        width={48} // Adjust width as needed
+        height={48} // Adjust height as needed
+        className="rounded-full"
+    />
+</td>
+
                 <td className="py-2 px-4 border-b">{student.fullname}</td>
                 <td className="py-2 px-4 border-b">{student.level}</td>
                 <td className="py-2 px-4 border-b">{student.course}</td>
