@@ -107,7 +107,7 @@ function DashboardPage() {
   useEffect(() => {
     const isAdmin = localStorage.getItem("isAdmin");
     if (!isAdmin) {
-      router.push("/admin/login");
+      router.push("/signin");
     }
 
     const storedAttendance = JSON.parse(
@@ -145,7 +145,7 @@ function DashboardPage() {
             {students.map((student) => (
               <tr key={student.id}>
                 <td className="py-2 px-4 border-b">
-                  <img
+                  <Image
                     src={student.picture}
                     alt={student.fullname}
                     className="w-12 h-12 rounded-full"
