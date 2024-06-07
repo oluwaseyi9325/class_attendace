@@ -123,6 +123,26 @@ function DashboardPage() {
     });
   };
 
+  const registered = (student: Student) => {
+    Swal.fire({
+      title: `${student.fullname} has already been registered `,
+      width: 500,
+      padding: "3em",
+      color: "#716add",
+      imageUrl: student.picture,
+      imageWidth: 50,
+      imageHeight: 50,
+      imageAlt: "Custom image",
+      background: "#fff url(/images/trees.png)",
+      backdrop: `
+        rgba(0,0,123,0.4)
+        url("/images/nyan-cat.gif")
+        left top
+        no-repeat
+      `,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-7xl mx-auto bg-white p-4 sm:p-8 rounded-lg shadow-md">
@@ -147,7 +167,10 @@ function DashboardPage() {
             </thead>
             <tbody>
               {students.map((student) => (
-                <tr key={student.id} className="border-b text-[12px] md:text-[14px]">
+                <tr
+                  key={student.id}
+                  className="border-b text-[12px] md:text-[14px]"
+                >
                   <td className="py-2 px-2 sm:px-4">
                     <Image
                       src={student.picture}
@@ -164,7 +187,7 @@ function DashboardPage() {
                   <td className="py-3 px-2 sm:px-4 flex space-x-2 justify-center items-center mt-[8px]">
                     {attendance[student.id] ? (
                       <button
-                        onClick={() => alert("Already registered")}
+                        onClick={() => registered(student)}
                         className="bg-yellow-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-yellow-700 transition duration-200"
                       >
                         Registered
