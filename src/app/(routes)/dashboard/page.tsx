@@ -127,12 +127,12 @@ function DashboardPage() {
     Swal.fire({
       title: `${student.fullname} has already been registered `,
       width: 500,
-      padding: "3em",
+      padding: "4px",
       color: "#716add",
       imageUrl: student.picture,
-      imageWidth: 50,
-      imageHeight: 50,
-      imageAlt: "Custom image",
+      imageWidth: 80,
+      imageHeight: 80,
+      imageAlt: `${student.fullname}`,
       background: "#fff url(/images/trees.png)",
       backdrop: `
         rgba(0,0,123,0.4)
