@@ -164,35 +164,32 @@ function DashboardPage() {
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-7xl mx-auto bg-white p-4 sm:p-8 rounded-lg shadow-md">
         <div className="flex flex-col md:flex-row justify-between mb-4 sm:mb-6">
-          <h1 className="text-xl sm:text-2xl font-bold ">
-            Admin Dashboard
-          </h1>
+          <h1 className="text-xl sm:text-2xl font-bold ">Admin Dashboard</h1>
           <div className="flex justify-between mt-3 md:mt-0 w-full md:w-[55%] my-auto ">
-          <select
-            value={selectedLevel}
-            onChange={handleLevelChange}
-            className="border p-2 rounded my-auto"
-          >
-            <option value="">Select Level</option>
-            {Array.from(new Set(students.map((student) => student.level))).map(
-              (level) => (
-                <option key={level} value={level}>
-                  {level}
-                </option>
-              )
-            )}
-          </select>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-blue-700 transition duration-200 my-auto"
-          >
-            Add Student
-          </button>
+            <select
+              value={selectedLevel}
+              onChange={handleLevelChange}
+              className="border p-2 rounded my-auto"
+            >
+              <option value="">Select Level</option>
+              {Array.from(new Set(students.map((student) => student.level)))
+                .sort((a, b) => a.localeCompare(b))
+                .map((level) => (
+                  <option key={level} value={level}>
+                    {level}
+                  </option>
+                ))}
+            </select>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-blue-700 transition duration-200 my-auto"
+            >
+              Add Student
+            </button>
           </div>
-          
         </div>
 
-        {selectedLevel && (
+        {selectedLevel ? (
           <div className="overflow-x-auto mt-4">
             <table className="min-w-full bg-white">
               <thead>
@@ -201,7 +198,7 @@ function DashboardPage() {
                   <th className="py-2 px-2 sm:px-4">Full Name</th>
                   <th className="py-2 px-2 sm:px-4">Level</th>
                   <th className="py-2 px-2 sm:px-4">Course</th>
-                  <th className="py-2 px-2 sm:px-4">Department</th>
+                  <th className="py-2 px-2 sm:px-4">Lecturer</th>
                   <th className="py-2 px-2 sm:px-4">Actions</th>
                   <th className="py-2 px-2 sm:px-4">Status</th>
                 </tr>
@@ -263,6 +260,10 @@ function DashboardPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        ) : (
+          <div className="text-center w-full">
+            Please select a level to mark attendance.
           </div>
         )}
       </div>
