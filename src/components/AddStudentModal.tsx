@@ -10,7 +10,7 @@ type Student = {
   fullname: string;
   level: string;
   course: string;
-  dept: string;
+  lecturer: string;
 };
 
 type AddStudentModalProps = {
@@ -29,7 +29,7 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
     fullname: "",
     level: "",
     course: "",
-    dept: "",
+    lecturer: "",
     picture: "",
   });
 
@@ -90,11 +90,11 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
           />
         </label>
         <label className="block mb-2">
-          Department:
+        Lecturer:
           <input
             type="text"
-            name="dept"
-            value={newStudentData.dept}
+            name="lecturer"
+            value={newStudentData.lecturer}
             onChange={handleInputChange}
             className="border rounded py-2 px-3 w-full"
           />
