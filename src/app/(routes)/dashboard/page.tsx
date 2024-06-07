@@ -5,9 +5,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { students as initialStudents } from "@/utils/data";
 import Swal from "sweetalert2";
-import Modal from "react-modal";
 import barcode from "@/assets/barcode.png";
-
+import EditModal from "@/components/EditModal";
 
 function DashboardPage() {
   type Attendance = {
@@ -27,8 +26,7 @@ function DashboardPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentStudentId, setCurrentStudentId] = useState<number | null>(null);
-  const [editStudentData, setEditStudentData] = useState<Student | null>(null);
+  const [currentStudent, setCurrentStudent] = useState<Student | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -91,28 +89,58 @@ function DashboardPage() {
   };
 
   const openEditModal = (student: Student) => {
-    setEditStudentData(student);
+    setCurrentStudent(student);
     setIsEditModalOpen(true);
   };
 
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (editStudentData) {
-      setEditStudentData({
-        ...editStudentData,
-        [e.target.name]: e.target.value,
-      });
-    }
+  const saveEditedStudent = (editedStudent: Student) => {
+    const updatedStudents = students.map((student) =>
+      student.id === editedStudent.id ? editedStudent : student
+    );
+    setStudents(updatedStudents);
+    localStorage.setItem("students", JSON.stringify(updatedStudents));
+    setIsEditModalOpen(false);
   };
 
-  const saveEditedStudent = () => {
-    if (editStudentData) {
-      const updatedStudents = students.map((student) =>
-        student.id === editStudentData.id ? editStudentData : student
-      );
-      setStudents(updatedStudents);
-      localStorage.setItem("students", JSON.stringify(updatedStudents));
-      setIsEditModalOpen(false);
-    }
+  const deleteStudent = (studentId: number) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const updatedStudents = students.filter(
+          (student) => student.id !== studentId
+        );
+        setStudents(updatedStudents);
+        localStorage.setItem("students", JSON.stringify(updatedStudents));
+        Swal.fire("Deleted!", "The student has been deleted.", "success");
+      }
+    });
+  };
+
+  const registered = (student: Student) => {
+    Swal.fire({
+      title: `${student.fullname} has already been registered `,
+      width: 500,
+      padding: "4px",
+      color: "#716add",
+      imageUrl: student.picture,
+      imageWidth: 80,
+      imageHeight: 80,
+      imageAlt: `${student.fullname}`,
+      background: "#fff url(/images/trees.png)",
+      backdrop: `
+        rgba(0,0,123,0.4)
+        url("/images/nyan-cat.gif")
+        left top
+        no-repeat
+      `,
+    });
   };
 
   return (
@@ -132,20 +160,23 @@ function DashboardPage() {
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
             <thead>
-              <tr>
-                <th className="py-2 px-2 sm:px-4 border-b">Picture</th>
-                <th className="py-2 px-2 sm:px-4 border-b">Full Name</th>
-                <th className="py-2 px-2 sm:px-4 border-b">Level</th>
-                <th className="py-2 px-2 sm:px-4 border-b">Course</th>
-                <th className="py-2 px-2 sm:px-4 border-b">Department</th>
-                <th className="py-2 px-2 sm:px-4 border-b">Actions</th>
-                <th className="py-2 px-2 sm:px-4 border-b">Status</th>
+              <tr className="border-b">
+                <th className="py-2 px-2 sm:px-4">Picture</th>
+                <th className="py-2 px-2 sm:px-4">Full Name</th>
+                <th className="py-2 px-2 sm:px-4">Level</th>
+                <th className="py-2 px-2 sm:px-4">Course</th>
+                <th className="py-2 px-2 sm:px-4">Department</th>
+                <th className="py-2 px-2 sm:px-4">Actions</th>
+                <th className="py-2 px-2 sm:px-4">Status</th>
               </tr>
             </thead>
             <tbody>
               {students.map((student) => (
-                <tr key={student.id}>
-                  <td className="py-2 px-2 sm:px-4 border-b">
+                <tr
+                  key={student.id}
+                  className="border-b text-[12px] md:text-[14px]"
+                >
+                  <td className="py-2 px-2 sm:px-4">
                     <Image
                       src={student.picture}
                       alt={student.fullname}
@@ -154,20 +185,14 @@ function DashboardPage() {
                       className="rounded-full"
                     />
                   </td>
-                  <td className="py-2 px-2 sm:px-4 border-b">
-                    {student.fullname}
-                  </td>
-                  <td className="py-2 px-2 sm:px-4 border-b">
-                    {student.level}
-                  </td>
-                  <td className="py-2 px-2 sm:px-4 border-b">
-                    {student.course}
-                  </td>
-                  <td className="py-2 px-2 sm:px-4 border-b">{student.dept}</td>
-                  <td className="py-2 px-2 sm:px-4 border-b flex space-x-2">
+                  <td className="py-2 px-2 sm:px-4">{student.fullname}</td>
+                  <td className="py-2 px-2 sm:px-4">{student.level}</td>
+                  <td className="py-2 px-2 sm:px-4">{student.course}</td>
+                  <td className="py-2 px-2 sm:px-4">{student.dept}</td>
+                  <td className="py-3 px-2 sm:px-4 flex space-x-2 justify-center items-center mt-[8px]">
                     {attendance[student.id] ? (
                       <button
-                        onClick={() => alert("Already registered")}
+                        onClick={() => registered(student)}
                         className="bg-yellow-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-yellow-700 transition duration-200"
                       >
                         Registered
@@ -188,8 +213,14 @@ function DashboardPage() {
                     >
                       Edit
                     </button>
+                    <button
+                      onClick={() => deleteStudent(student.id)}
+                      className="bg-red-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-red-700 transition duration-200"
+                    >
+                      Delete
+                    </button>
                   </td>
-                  <td className="py-2 px-2 sm:px-4 border-b">
+                  <td className="py-2 px-2 sm:px-4">
                     {attendance[student.id] ? (
                       <span className="text-green-500">
                         Registered on {attendance[student.id]}
@@ -205,98 +236,12 @@ function DashboardPage() {
         </div>
       </div>
 
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-        contentLabel="Confirm Registration"
-        className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto my-20"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-      >
-        <h2 className="text-xl font-bold mb-4">Confirm Registration</h2>
-        <p>Are you sure you want to register this student?</p>
-        <div className="mt-4 flex justify-end">
-          <button
-            onClick={() => setIsModalOpen(false)}
-            className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 transition duration-200"
-          >
-            Cancel
-          </button>
-          <button
-            // onClick={registerAttendance}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
-          >
-            Confirm
-          </button>
-        </div>
-      </Modal>
-
-      <Modal
+      <EditModal
         isOpen={isEditModalOpen}
         onRequestClose={() => setIsEditModalOpen(false)}
-        contentLabel="Edit Student"
-        className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto my-20"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-      >
-        <h2 className="text-xl font-bold mb-4">Edit Student</h2>
-        {editStudentData && (
-          <div>
-            <label className="block mb-2">
-              Full Name:
-              <input
-                type="text"
-                name="fullname"
-                value={editStudentData.fullname}
-                onChange={handleEditChange}
-                className="border rounded py-2 px-3 w-full"
-              />
-            </label>
-            <label className="block mb-2">
-              Level:
-              <input
-                type="text"
-                name="level"
-                value={editStudentData.level}
-                onChange={handleEditChange}
-                className="border rounded py-2 px-3 w-full"
-              />
-            </label>
-            <label className="block mb-2">
-              Course:
-              <input
-                type="text"
-                name="course"
-                value={editStudentData.course}
-                onChange={handleEditChange}
-                className="border rounded py-2 px-3 w-full"
-              />
-            </label>
-            <label className="block mb-2">
-              Department:
-              <input
-                type="text"
-                name="dept"
-                value={editStudentData.dept}
-                onChange={handleEditChange}
-                className="border rounded py-2 px-3 w-full"
-              />
-            </label>
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 transition duration-200"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={saveEditedStudent}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        )}
-      </Modal>
+        student={currentStudent}
+        onSave={saveEditedStudent}
+      />
     </div>
   );
 }
