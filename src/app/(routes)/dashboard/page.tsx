@@ -146,10 +146,15 @@ function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-7xl mx-auto bg-white p-4 sm:p-8 rounded-lg shadow-md">
-        <div className="flex w-full justify-between">
+        <div className="flex  justify-between">
           <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
             Admin Dashboard
           </h1>
+          <button 
+         className="bg-blue-500 text-white px-2 sm:px-4 rounded hover:bg-blue-700 transition duration-200"
+                      >
+                       Add Student
+                      </button>
         </div>
 
         <div className="overflow-x-auto">
