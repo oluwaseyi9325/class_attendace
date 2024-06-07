@@ -8,7 +8,6 @@ import Swal from "sweetalert2";
 import Modal from "react-modal";
 import barcode from "@/assets/barcode.png";
 
-// Modal.setAppElement("#__next"); // Required for accessibility
 
 function DashboardPage() {
   type Attendance = {
@@ -25,7 +24,7 @@ function DashboardPage() {
   };
 
   const [attendance, setAttendance] = useState<Attendance>({});
-  const [students, setStudents] = useState<Student[]>(initialStudents);
+  const [students, setStudents] = useState<Student[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentStudentId, setCurrentStudentId] = useState<number | null>(null);
@@ -42,6 +41,11 @@ function DashboardPage() {
       localStorage.getItem("attendance") || "{}"
     );
     setAttendance(storedAttendance);
+
+    const storedStudents = JSON.parse(
+      localStorage.getItem("students") || JSON.stringify(initialStudents)
+    );
+    setStudents(storedStudents);
   }, [router]);
 
   const registerAttendance = (studentId: number, studentName: string) => {
@@ -106,6 +110,7 @@ function DashboardPage() {
         student.id === editStudentData.id ? editStudentData : student
       );
       setStudents(updatedStudents);
+      localStorage.setItem("students", JSON.stringify(updatedStudents));
       setIsEditModalOpen(false);
     }
   };
