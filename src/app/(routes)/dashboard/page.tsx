@@ -7,6 +7,7 @@ import { students as initialStudents } from "@/utils/data";
 import Swal from "sweetalert2";
 import barcode from "@/assets/barcode.png";
 import EditModal from "@/components/EditModal";
+import AddStudentModal from "@/components/AddStudentModal";
 
 function DashboardPage() {
   type Attendance = {
@@ -102,6 +103,14 @@ function DashboardPage() {
     setIsEditModalOpen(false);
   };
 
+
+  const addNewStudent = (newStudent: Student) => {
+    const updatedStudents = [...students, newStudent];
+    setStudents(updatedStudents);
+    localStorage.setItem("students", JSON.stringify(updatedStudents));
+    setIsModalOpen(false);
+  };
+
   const deleteStudent = (studentId: number) => {
     Swal.fire({
       title: "Are you sure?",
@@ -150,11 +159,12 @@ function DashboardPage() {
           <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
             Admin Dashboard
           </h1>
-          <button 
-         className="bg-blue-500 text-white px-2 sm:px-4 rounded hover:bg-blue-700 transition duration-200"
-                      >
-                       Add Student
-                      </button>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-blue-700 transition duration-200 my-auto"
+          >
+            Add Student
+          </button>
         </div>
 
         <div className="overflow-x-auto">
@@ -241,6 +251,11 @@ function DashboardPage() {
         onRequestClose={() => setIsEditModalOpen(false)}
         student={currentStudent}
         onSave={saveEditedStudent}
+      />
+      <AddStudentModal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        onSave={addNewStudent}
       />
     </div>
   );
