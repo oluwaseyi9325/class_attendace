@@ -3,16 +3,33 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { students } from "@/utils/data";
+import { students as initialStudents } from "@/utils/data";
 import Swal from "sweetalert2";
+import Modal from "react-modal";
 import barcode from "@/assets/barcode.png";
+
+// Modal.setAppElement("#__next"); // Required for accessibility
 
 function DashboardPage() {
   type Attendance = {
     [key: number]: string;
   };
 
+  type Student = {
+    id: number;
+    picture: string;
+    fullname: string;
+    level: string;
+    course: string;
+    dept: string;
+  };
+
   const [attendance, setAttendance] = useState<Attendance>({});
+  const [students, setStudents] = useState<Student[]>(initialStudents);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentStudentId, setCurrentStudentId] = useState<number | null>(null);
+  const [editStudentData, setEditStudentData] = useState<Student | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -30,7 +47,7 @@ function DashboardPage() {
   const registerAttendance = (studentId: number, studentName: string) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You are about to register this student.",
+      text: `You are about to register ${studentName}`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -69,6 +86,30 @@ function DashboardPage() {
     });
   };
 
+  const openEditModal = (student: Student) => {
+    setEditStudentData(student);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (editStudentData) {
+      setEditStudentData({
+        ...editStudentData,
+        [e.target.name]: e.target.value,
+      });
+    }
+  };
+
+  const saveEditedStudent = () => {
+    if (editStudentData) {
+      const updatedStudents = students.map((student) =>
+        student.id === editStudentData.id ? editStudentData : student
+      );
+      setStudents(updatedStudents);
+      setIsEditModalOpen(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-7xl mx-auto bg-white p-4 sm:p-8 rounded-lg shadow-md">
@@ -76,7 +117,6 @@ function DashboardPage() {
           <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
             Admin Dashboard
           </h1>
-          {/* <input type="text" placeholder="Search" className="my-auto placeholder:text-blue-400 border py-1 px-2 rounded-md" /> */}
         </div>
 
         <div className="overflow-x-auto">
@@ -114,7 +154,7 @@ function DashboardPage() {
                     {student.course}
                   </td>
                   <td className="py-2 px-2 sm:px-4 border-b">{student.dept}</td>
-                  <td className="py-2 px-2 sm:px-4 border-b">
+                  <td className="py-2 px-2 sm:px-4 border-b flex space-x-2">
                     {attendance[student.id] ? (
                       <button
                         onClick={() => alert("Already registered")}
@@ -132,6 +172,12 @@ function DashboardPage() {
                         Mark Register
                       </button>
                     )}
+                    <button
+                      onClick={() => openEditModal(student)}
+                      className="bg-green-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-green-700 transition duration-200"
+                    >
+                      Edit
+                    </button>
                   </td>
                   <td className="py-2 px-2 sm:px-4 border-b">
                     {attendance[student.id] ? (
@@ -148,6 +194,99 @@ function DashboardPage() {
           </table>
         </div>
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        contentLabel="Confirm Registration"
+        className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto my-20"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <h2 className="text-xl font-bold mb-4">Confirm Registration</h2>
+        <p>Are you sure you want to register this student?</p>
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={() => setIsModalOpen(false)}
+            className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 transition duration-200"
+          >
+            Cancel
+          </button>
+          <button
+            // onClick={registerAttendance}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+          >
+            Confirm
+          </button>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={isEditModalOpen}
+        onRequestClose={() => setIsEditModalOpen(false)}
+        contentLabel="Edit Student"
+        className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto my-20"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <h2 className="text-xl font-bold mb-4">Edit Student</h2>
+        {editStudentData && (
+          <div>
+            <label className="block mb-2">
+              Full Name:
+              <input
+                type="text"
+                name="fullname"
+                value={editStudentData.fullname}
+                onChange={handleEditChange}
+                className="border rounded py-2 px-3 w-full"
+              />
+            </label>
+            <label className="block mb-2">
+              Level:
+              <input
+                type="text"
+                name="level"
+                value={editStudentData.level}
+                onChange={handleEditChange}
+                className="border rounded py-2 px-3 w-full"
+              />
+            </label>
+            <label className="block mb-2">
+              Course:
+              <input
+                type="text"
+                name="course"
+                value={editStudentData.course}
+                onChange={handleEditChange}
+                className="border rounded py-2 px-3 w-full"
+              />
+            </label>
+            <label className="block mb-2">
+              Department:
+              <input
+                type="text"
+                name="dept"
+                value={editStudentData.dept}
+                onChange={handleEditChange}
+                className="border rounded py-2 px-3 w-full"
+              />
+            </label>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 transition duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveEditedStudent}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
