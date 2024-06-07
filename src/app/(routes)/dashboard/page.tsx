@@ -20,7 +20,7 @@ function DashboardPage() {
     fullname: string;
     level: string;
     course: string;
-    dept: string;
+    lecturer: string;
   };
 
   const [attendance, setAttendance] = useState<Attendance>({});
@@ -28,6 +28,7 @@ function DashboardPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentStudent, setCurrentStudent] = useState<Student | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
@@ -103,7 +104,6 @@ function DashboardPage() {
     setIsEditModalOpen(false);
   };
 
-
   const addNewStudent = (newStudent: Student) => {
     const updatedStudents = [...students, newStudent];
     setStudents(updatedStudents);
@@ -152,111 +152,136 @@ function DashboardPage() {
     });
   };
 
+  const handleLevelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedLevel(e.target.value);
+  };
+
+  const filteredStudents = students.filter(
+    (student) => student.level === selectedLevel
+  );
+
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-7xl mx-auto bg-white p-4 sm:p-8 rounded-lg shadow-md">
-        <div className="flex  justify-between">
-          <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
+        <div className="flex flex-col md:flex-row justify-between mb-4 sm:mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold ">
             Admin Dashboard
           </h1>
+          <div className="flex justify-between mt-3 md:mt-0 w-full md:w-[55%] my-auto ">
+          <select
+            value={selectedLevel}
+            onChange={handleLevelChange}
+            className="border p-2 rounded my-auto"
+          >
+            <option value="">Select Level</option>
+            {Array.from(new Set(students.map((student) => student.level))).map(
+              (level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
+              )
+            )}
+          </select>
           <button
             onClick={() => setIsModalOpen(true)}
             className="bg-blue-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-blue-700 transition duration-200 my-auto"
           >
             Add Student
           </button>
+          </div>
+          
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
-            <thead>
-              <tr className="border-b">
-                <th className="py-2 px-2 sm:px-4">Picture</th>
-                <th className="py-2 px-2 sm:px-4">Full Name</th>
-                <th className="py-2 px-2 sm:px-4">Level</th>
-                <th className="py-2 px-2 sm:px-4">Course</th>
-                <th className="py-2 px-2 sm:px-4">Department</th>
-                <th className="py-2 px-2 sm:px-4">Actions</th>
-                <th className="py-2 px-2 sm:px-4">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((student) => (
-                <tr
-                  key={student.id}
-                  className="border-b text-[12px] md:text-[14px]"
-                >
-                  <td className="py-2 px-2 sm:px-4">
-                    <Image
-                      src={student.picture}
-                      alt={student.fullname}
-                      width={48}
-                      height={48}
-                      className="rounded-full"
-                    />
-                  </td>
-                  <td className="py-2 px-2 sm:px-4">{student.fullname}</td>
-                  <td className="py-2 px-2 sm:px-4">{student.level}</td>
-                  <td className="py-2 px-2 sm:px-4">{student.course}</td>
-                  <td className="py-2 px-2 sm:px-4">{student.dept}</td>
-                  <td className="py-3 px-2 sm:px-4 flex space-x-2 justify-center items-center mt-[8px]">
-                    {attendance[student.id] ? (
-                      <button
-                        onClick={() => registered(student)}
-                        className="bg-yellow-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-yellow-700 transition duration-200"
-                      >
-                        Registered
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() =>
-                          registerAttendance(student.id, student.fullname)
-                        }
-                        className="bg-blue-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-blue-700 transition duration-200"
-                      >
-                        Mark Register
-                      </button>
-                    )}
-                    <button
-                      onClick={() => openEditModal(student)}
-                      className="bg-green-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-green-700 transition duration-200"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => deleteStudent(student.id)}
-                      className="bg-red-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-red-700 transition duration-200"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                  <td className="py-2 px-2 sm:px-4">
-                    {attendance[student.id] ? (
-                      <span className="text-green-500">
-                        Registered on {attendance[student.id]}
-                      </span>
-                    ) : (
-                      <span className="text-red-500">Not Registered</span>
-                    )}
-                  </td>
+        {selectedLevel && (
+          <div className="overflow-x-auto mt-4">
+            <table className="min-w-full bg-white">
+              <thead>
+                <tr className="border-b">
+                  <th className="py-2 px-2 sm:px-4">Picture</th>
+                  <th className="py-2 px-2 sm:px-4">Full Name</th>
+                  <th className="py-2 px-2 sm:px-4">Level</th>
+                  <th className="py-2 px-2 sm:px-4">Course</th>
+                  <th className="py-2 px-2 sm:px-4">Department</th>
+                  <th className="py-2 px-2 sm:px-4">Actions</th>
+                  <th className="py-2 px-2 sm:px-4">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filteredStudents.map((student) => (
+                  <tr
+                    key={student.id}
+                    className="border-b text-[12px] md:text-[14px]"
+                  >
+                    <td className="py-2 px-2 sm:px-4">
+                      <Image
+                        src={student.picture}
+                        alt={student.fullname}
+                        width={48}
+                        height={48}
+                        className="rounded-full"
+                      />
+                    </td>
+                    <td className="py-2 px-2 sm:px-4">{student.fullname}</td>
+                    <td className="py-2 px-2 sm:px-4">{student.level}</td>
+                    <td className="py-2 px-2 sm:px-4">{student.course}</td>
+                    <td className="py-2 px-2 sm:px-4">{student.lecturer}</td>
+                    <td className="py-3 px-2 sm:px-4 flex space-x-2 justify-center items-center mt-[8px]">
+                      {attendance[student.id] ? (
+                        <button
+                          onClick={() => registered(student)}
+                          className="bg-yellow-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-yellow-700 transition duration-200"
+                        >
+                          Registered
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() =>
+                            registerAttendance(student.id, student.fullname)
+                          }
+                          className="bg-blue-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-blue-700 transition duration-200"
+                        >
+                          Mark Register
+                        </button>
+                      )}
+                      <button
+                        onClick={() => openEditModal(student)}
+                        className="bg-green-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-green-700 transition duration-200"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteStudent(student.id)}
+                        className="bg-red-500 text-white px-2 sm:px-4 py-1 rounded hover:bg-red-700 transition duration-200"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                    <td className="py-2 px-2 sm:px-4">
+                      {attendance[student.id] ? "Present" : "Absent"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
-      <EditModal
-        isOpen={isEditModalOpen}
-        onRequestClose={() => setIsEditModalOpen(false)}
-        student={currentStudent}
-        onSave={saveEditedStudent}
-      />
-      <AddStudentModal
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-        onSave={addNewStudent}
-      />
+      {isModalOpen && (
+        <AddStudentModal
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          onSave={addNewStudent}
+        />
+      )}
+      {isEditModalOpen && currentStudent && (
+        <EditModal
+          isOpen={isEditModalOpen}
+          onRequestClose={() => setIsEditModalOpen(false)}
+          student={currentStudent}
+          onSave={saveEditedStudent}
+        />
+      )}
     </div>
   );
 }

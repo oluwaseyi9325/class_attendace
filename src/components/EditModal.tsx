@@ -7,7 +7,7 @@ type Student = {
   fullname: string;
   level: string;
   course: string;
-  dept: string;
+  lecturer: string;
 };
 
 type EditModalProps = {
@@ -89,11 +89,11 @@ const EditModal: React.FC<EditModalProps> = ({
             />
           </label>
           <label className="block mb-2">
-            Department:
+            Lecturer:
             <input
               type="text"
-              name="dept"
-              value={editStudentData.dept}
+              name="lecturer"
+              value={editStudentData.lecturer}
               onChange={handleEditChange}
               className="border rounded py-2 px-3 w-full"
             />
