@@ -1,119 +1,89 @@
-import React from "react";
-import Modal from "react-modal";
 
-type Student = {
-  id: number;
-  picture: string;
-  fullname: string;
-  level: string;
-  course: string;
-  lecturer: string;
-};
+// components/EditModal.tsx
+
+'use client'
+
+
+import React, { useState } from "react";
+import Modal from "react-modal";
+import { Student } from "@/types";
 
 type EditModalProps = {
   isOpen: boolean;
   onRequestClose: () => void;
-  student: Student | null;
-  onSave: (student: Student) => void;
+  onSave: (editedStudent: Student) => void;
+  student: Student;
 };
 
 const EditModal: React.FC<EditModalProps> = ({
   isOpen,
   onRequestClose,
-  student,
   onSave,
+  student,
 }) => {
-  const [editStudentData, setEditStudentData] = React.useState<Student | null>(
-    student
-  );
-
-  React.useEffect(() => {
-    setEditStudentData(student);
-  }, [student]);
-
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (editStudentData) {
-      setEditStudentData({
-        ...editStudentData,
-        [e.target.name]: e.target.value,
-      });
-    }
-  };
+  const [fullname, setFullname] = useState(student.fullname);
+  const [level, setLevel] = useState(student.level);
+  const [course, setCourse] = useState(student.course);
+  const [picture, setPicture] = useState(student.picture);
 
   const handleSave = () => {
-    if (editStudentData) {
-      onSave(editStudentData);
-      onRequestClose();
-    }
+    const editedStudent: Student = {
+      ...student,
+      fullname,
+      level,
+      course,
+      picture,
+    };
+    onSave(editedStudent);
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onRequestClose}
-      contentLabel="Edit Student"
-      className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto my-20"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-    >
-      <h2 className="text-xl font-bold mb-4">Edit Student</h2>
-      {editStudentData && (
-        <div>
-          <label className="block mb-2">
-            Full Name:
-            <input
-              type="text"
-              name="fullname"
-              value={editStudentData.fullname}
-              onChange={handleEditChange}
-              className="border rounded py-2 px-3 w-full"
-            />
-          </label>
-          <label className="block mb-2">
-            Level:
-            <input
-              type="text"
-              name="level"
-              value={editStudentData.level}
-              onChange={handleEditChange}
-              className="border rounded py-2 px-3 w-full"
-            />
-          </label>
-          <label className="block mb-2">
-            Course:
-            <input
-              type="text"
-              name="course"
-              value={editStudentData.course}
-              onChange={handleEditChange}
-              className="border rounded py-2 px-3 w-full"
-            />
-          </label>
-          <label className="block mb-2">
-            Lecturer:
-            <input
-              type="text"
-              name="lecturer"
-              value={editStudentData.lecturer}
-              onChange={handleEditChange}
-              className="border rounded py-2 px-3 w-full"
-            />
-          </label>
-          <div className="mt-4 flex justify-end">
-            <button
-              onClick={onRequestClose}
-              className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 transition duration-200"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSave}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
-            >
-              Save
-            </button>
-          </div>
+    <Modal isOpen={isOpen} onRequestClose={onRequestClose} ariaHideApp={false}>
+      <div className="p-6">
+        <h2 className="text-xl font-bold mb-4">Edit Student</h2>
+        <input
+          type="text"
+          placeholder="Full Name"
+          value={fullname}
+          onChange={(e) => setFullname(e.target.value)}
+          className="border p-2 w-full mb-4"
+        />
+        <input
+          type="text"
+          placeholder="Level"
+          value={level}
+          onChange={(e) => setLevel(e.target.value)}
+          className="border p-2 w-full mb-4"
+        />
+        <input
+          type="text"
+          placeholder="Course"
+          value={course}
+          onChange={(e) => setCourse(e.target.value)}
+          className="border p-2 w-full mb-4"
+        />
+        <input
+          type="text"
+          placeholder="Picture URL"
+          value={picture}
+          onChange={(e) => setPicture(e.target.value)}
+          className="border p-2 w-full mb-4"
+        />
+        <div className="flex justify-end space-x-4">
+          <button
+            onClick={onRequestClose}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-200"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-200"
+          >
+            Save
+          </button>
         </div>
-      )}
+      </div>
     </Modal>
   );
 };
