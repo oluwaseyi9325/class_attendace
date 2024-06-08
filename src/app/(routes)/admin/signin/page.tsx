@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 
-function SignInPage() {
+function AdminSignInPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -12,7 +12,7 @@ function SignInPage() {
   const handleLogin = () => {
       if (username === 'admin' && password === 'password') {
           localStorage.setItem('isAdmin', 'true');
-          router.push('/dashboard');
+          router.push('/admin/dashboard');
       } else {
           alert('Invalid credentials');
       }
@@ -52,4 +52,4 @@ function SignInPage() {
   )
 }
 
-export default SignInPage
+export default AdminSignInPage

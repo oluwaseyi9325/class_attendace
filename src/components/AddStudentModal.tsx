@@ -1,120 +1,202 @@
+
+// "use client";
+
+// import React, { useState } from "react";
+
+// type Lecturer = {
+//   id: number;
+//   fullname: string;
+//   courses: { course: string; level: string }[];
+// };
+
+// type AddStudentModalProps = {
+//   onSave: (student: Student) => void;
+//   onRequestClose: () => void;
+//   isOpen: boolean;
+//   lecturers: Lecturer[];
+// };
+
+// type Student = {
+//   id: number;
+//   fullname: string;
+//   level: string;
+//   course: string;
+//   lecturer: string;
+//   picture: string;
+// };
+
+// const AddStudentModal: React.FC<AddStudentModalProps> = ({
+//   onRequestClose,
+//   onSave,
+//   lecturers,
+// }) => {
+//   const [fullname, setFullname] = useState("");
+//   const [level, setLevel] = useState("");
+//   const [course, setCourse] = useState("");
+//   const [picture, setPicture] = useState("");
+
+//   const handleSave = () => {
+//     const lecturer = lecturers.find((lect) =>
+//       lect.courses.some((c) => c.course === course && c.level === level)
+//     )?.fullname;
+
+//     const newStudent: Student = {
+//       id: Date.now(),
+//       fullname,
+//       level,
+//       course,
+//       lecturer: lecturer || "Unknown",
+//       picture: 'https://i.pinimg.com/736x/39/f2/40/39f240a04441d36e63432f10f21ff951.jpg',
+//     };
+//     onSave(newStudent);
+//   };
+
+//   return (
+//     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+//       <div className="bg-white p-4 rounded-lg shadow-md">
+//         <h2 className="text-xl font-bold mb-4">Add Student</h2>
+//         <div className="mb-4">
+//           <label className="block mb-2">Full Name</label>
+//           <input
+//             type="text"
+//             className="w-full border p-2 rounded"
+//             value={fullname}
+//             onChange={(e) => setFullname(e.target.value)}
+//           />
+//         </div>
+//         <div className="mb-4">
+//           <label className="block mb-2">Level</label>
+//           <input
+//             type="text"
+//             className="w-full border p-2 rounded"
+//             value={level}
+//             onChange={(e) => setLevel(e.target.value)}
+//           />
+//         </div>
+//         <div className="mb-4">
+//           <label className="block mb-2">Course</label>
+//           <input
+//             type="text"
+//             className="w-full border p-2 rounded"
+//             value={course}
+//             onChange={(e) => setCourse(e.target.value)}
+//           />
+//         </div>
+//         <div className="mb-4">
+//           <label className="block mb-2">Picture URL</label>
+//           <input
+//             type="text"
+//             className="w-full border p-2 rounded"
+//             value={picture}
+//             onChange={(e) => setPicture(e.target.value)}
+//           />
+//         </div>
+//         <div className="flex justify-end">
+//           <button
+//             onClick={onRequestClose}
+//             className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 transition duration-200 mr-2"
+//           >
+//             Cancel
+//           </button>
+//           <button
+//             onClick={handleSave}
+//             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+//           >
+//             Save
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AddStudentModal;
+
+
+
+
+
+
+
 // components/AddStudentModal.tsx
+
+'use client'
+
+// components/AddStudentModal.tsx
+
 import React, { useState } from "react";
 import Modal from "react-modal";
-import { students } from "@/utils/data";
-import avatar from "@/assets/avatar.png";
-
-type Student = {
-  id: number;
-  picture: string;
-  fullname: string;
-  level: string;
-  course: string;
-  lecturer: string;
-};
+import { Student, Lecturer } from "@/types";
 
 type AddStudentModalProps = {
   isOpen: boolean;
   onRequestClose: () => void;
   onSave: (newStudent: Student) => void;
+  lecturers: Lecturer[];
 };
 
 const AddStudentModal: React.FC<AddStudentModalProps> = ({
   isOpen,
   onRequestClose,
   onSave,
+  lecturers,
 }) => {
-  const [newStudentData, setNewStudentData] = useState<Student>({
-    id: Date.now(),
-    fullname: "",
-    level: "",
-    course: "",
-    lecturer: "",
-    picture: "",
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewStudentData((prevData) => ({ ...prevData, [name]: value }));
-  };
+  const [fullname, setFullname] = useState("");
+  const [level, setLevel] = useState("");
+  const [course, setCourse] = useState("");
+  const [picture, setPicture] = useState("");
 
   const handleSave = () => {
-    // Ensure the static image URL is always used
-    const studentToSave = {
-      ...newStudentData,
-      picture:
-        "https://i.pinimg.com/736x/39/f2/40/39f240a04441d36e63432f10f21ff951.jpg",
-    };
-    onSave(studentToSave);
-    onRequestClose();
+    const newStudent: Student = { id: Date.now(), fullname, level, course, picture };
+    onSave(newStudent);
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onRequestClose}
-      contentLabel="Add New Student"
-      className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto my-20"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-    >
-      <h2 className="text-xl font-bold mb-4">Add New Student</h2>
-      <div>
-        <label className="block mb-2">
-          Full Name:
-          <input
-            type="text"
-            name="fullname"
-            value={newStudentData.fullname}
-            onChange={handleInputChange}
-            className="border rounded py-2 px-3 w-full"
-          />
-        </label>
-        <label className="block mb-2">
-          Level:
-          <input
-            type="text"
-            name="level"
-            value={newStudentData.level}
-            onChange={handleInputChange}
-            className="border rounded py-2 px-3 w-full"
-          />
-        </label>
-        <label className="block mb-2">
-          Course:
-          <input
-            type="text"
-            name="course"
-            value={newStudentData.course}
-            onChange={handleInputChange}
-            className="border rounded py-2 px-3 w-full"
-          />
-        </label>
-        <label className="block mb-2">
-        Lecturer:
-          <input
-            type="text"
-            name="lecturer"
-            value={newStudentData.lecturer}
-            onChange={handleInputChange}
-            className="border rounded py-2 px-3 w-full"
-          />
-        </label>
-        <label className="block mb-4">
-          Picture URL:
-          <input
-            type="text"
-            name="picture"
-            value={newStudentData.picture}
-            onChange={handleInputChange}
-            className="border rounded py-2 px-3 w-full"
-          />
-        </label>
-        <button
-          onClick={handleSave}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
-        >
-          Save
-        </button>
+    <Modal isOpen={isOpen} onRequestClose={onRequestClose} ariaHideApp={false}>
+      <div className="p-6">
+        <h2 className="text-xl font-bold mb-4">Add Student</h2>
+        <input
+          type="text"
+          placeholder="Full Name"
+          value={fullname}
+          onChange={(e) => setFullname(e.target.value)}
+          className="border p-2 w-full mb-4"
+        />
+        <input
+          type="text"
+          placeholder="Level"
+          value={level}
+          onChange={(e) => setLevel(e.target.value)}
+          className="border p-2 w-full mb-4"
+        />
+        <input
+          type="text"
+          placeholder="Course"
+          value={course}
+          onChange={(e) => setCourse(e.target.value)}
+          className="border p-2 w-full mb-4"
+        />
+        <input
+          type="text"
+          placeholder="Picture URL"
+          value={picture}
+          onChange={(e) => setPicture(e.target.value)}
+          className="border p-2 w-full mb-4"
+        />
+        <div className="flex justify-end space-x-4">
+          <button
+            onClick={onRequestClose}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-200"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-200"
+          >
+            Save
+          </button>
+        </div>
       </div>
     </Modal>
   );
