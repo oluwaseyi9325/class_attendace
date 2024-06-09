@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Inter,Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import NavBar from "@/components/Navbar"; // Adjust the import path based on your project structure
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Payme",
-  description: "Payme",
+  title: "Online Class Attendance",
+  description: "Online Class Attendance",
 };
 
 export default function RootLayout({
@@ -16,7 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body style={{backgroundColor:"#FFF8ED"}} className={inter.className}>{children}</body>
+      <body style={{backgroundColor:"#FFF8ED"}} className={inter.className}>
+        <NavBar />
+        {children}
+      </body>
     </html>
   );
 }

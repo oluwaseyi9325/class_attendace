@@ -100,7 +100,7 @@ const LecturerDashboardPage: React.FC = () => {
             <select
               value={selectedCourse}
               onChange={handleCourseChange}
-              className="border p-2 rounded mb-4 w-full"
+              className="border p-2 rounded mb-4 w-full md:w-[600px]"
             >
               <option value="">Select Course</option>
               {lecturer.courses.map((course, index) => (
