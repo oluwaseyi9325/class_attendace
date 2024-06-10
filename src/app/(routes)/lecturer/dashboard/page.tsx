@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -19,6 +19,7 @@ const LecturerDashboardPage: React.FC = () => {
   const [selectedCourse, setSelectedCourse] = useState<string>("");
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
   const [attendance, setAttendance] = useState<Attendance[]>([]);
+  const [enteredBarcode, setEnteredBarcode] = useState<string>("");
   const router = useRouter();
 
   useEffect(() => {
@@ -26,14 +27,18 @@ const LecturerDashboardPage: React.FC = () => {
     if (!isLecturer) {
       router.push("/lecturer/signin");
     } else {
-      const storedLecturer = JSON.parse(localStorage.getItem("lecturer") || "null");
+      const storedLecturer = JSON.parse(
+        localStorage.getItem("lecturer") || "null"
+      );
       setLecturer(storedLecturer);
     }
 
     const storedStudents = JSON.parse(localStorage.getItem("students") || "[]");
     setStudents(storedStudents);
 
-    const storedAttendance = JSON.parse(localStorage.getItem("attendance") || "[]");
+    const storedAttendance = JSON.parse(
+      localStorage.getItem("attendance") || "[]"
+    );
     setAttendance(storedAttendance);
   }, [router]);
 
@@ -52,7 +57,7 @@ const LecturerDashboardPage: React.FC = () => {
 
   const markAttendance = (student: any, status: "Present" | "Absent") => {
     const today = new Date().toLocaleDateString();
-   const studentId=student.id
+    const studentId = student.id;
     const existingRecord = attendance.find(
       (record) =>
         record.studentId === studentId &&
@@ -61,6 +66,15 @@ const LecturerDashboardPage: React.FC = () => {
 
     if (existingRecord) {
       Swal.fire("Error", "Attendance for today already marked", "error");
+      return;
+    }
+
+    // Inside the component
+    const barcodeData = student.barcode.split("&data=")[1]; // Extracting the data part from the URL
+
+    // Then in the markAttendance function, you can compare it with enteredBarcode
+    if (barcodeData !== enteredBarcode) {
+      Swal.fire("Error", "Invalid barcode", "error");
       return;
     }
 
@@ -79,7 +93,7 @@ const LecturerDashboardPage: React.FC = () => {
       imageUrl: student.barcode,
       imageWidth: 200,
       imageHeight: 200,
-      imageAlt: "Custom image"
+      imageAlt: "Custom image",
     });
     // Swal.fire("Success", `Marked as ${status}`, "success");
   };
@@ -87,7 +101,10 @@ const LecturerDashboardPage: React.FC = () => {
   const getStudentAttendance = (studentId: number) => {
     return attendance
       .filter((record) => record.studentId === studentId)
-      .map((record) => `${new Date(record.date).toLocaleString()}: ${record.status}`)
+      .map(
+        (record) =>
+          `${new Date(record.date).toLocaleString()}: ${record.status}`
+      )
       .join("\n");
   };
 
@@ -101,7 +118,9 @@ const LecturerDashboardPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-7xl mx-auto bg-white p-4 sm:p-8 rounded-lg shadow-md">
-        <h1 className="text-xl sm:text-2xl font-bold mb-4">Lecturer Dashboard</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mb-4">
+          Lecturer Dashboard
+        </h1>
         {lecturer && (
           <div className="mb-4">
             <h2 className="text-lg font-bold">Select Course</h2>
@@ -121,11 +140,13 @@ const LecturerDashboardPage: React.FC = () => {
         )}
         {selectedCourse && (
           <div>
-            <h2 className="text-lg font-bold mb-4">Students Enrolled in {selectedCourse}</h2>
+            <h2 className="text-lg font-bold mb-4">
+              Students Enrolled in {selectedCourse}
+            </h2>
             <table className="w-full border-collapse border border-gray-200">
               <thead>
                 <tr>
-                <th className="border border-gray-200 p-2">S/N</th>
+                  <th className="border border-gray-200 p-2">S/N</th>
                   <th className="border border-gray-200 p-2">Full Name</th>
                   <th className="border border-gray-200 p-2">Level</th>
                   <th className="border border-gray-200 p-2">Course</th>
@@ -134,13 +155,25 @@ const LecturerDashboardPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredStudents.map((student,i) => (
+                {filteredStudents.map((student, i) => (
                   <tr key={student.id}>
-                     <td className="border border-gray-200 p-2">{i+1}</td>
-                    <td className="border border-gray-200 p-2">{student.fullname}</td>
-                    <td className="border border-gray-200 p-2">{student.level}</td>
-                    <td className="border border-gray-200 p-2">{student.course}</td>
+                    <td className="border border-gray-200 p-2">{i + 1}</td>
                     <td className="border border-gray-200 p-2">
+                      {student.fullname}
+                    </td>
+                    <td className="border border-gray-200 p-2">
+                      {student.level}
+                    </td>
+                    <td className="border border-gray-200 p-2">
+                      {student.course}
+                    </td>
+                    <td className="border border-gray-200 p-2">
+                      <input
+                        type="text"
+                        placeholder={`Enter ${student.fullname} Barcode`}
+                        onChange={(e) => setEnteredBarcode(e.target.value)}
+                        className="border p-2 rounded mr-2"
+                      />
                       <button
                         onClick={() => markAttendance(student, "Present")}
                         className="bg-green-500 text-white px-2 py-1 rounded mr-2 hover:bg-green-700 transition duration-200"
@@ -154,16 +187,21 @@ const LecturerDashboardPage: React.FC = () => {
                         Absent
                       </button>
                       <div className="mt-2">
-                        {getStudentAttendance(student.id).split("\n").map((line, index) => (
-                          <div key={index}>{line}</div>
-                        ))}
+                        {getStudentAttendance(student.id)
+                          .split("\n")
+                          .map((line, index) => (
+                            <div key={index}>{line}</div>
+                          ))}
                       </div>
                     </td>
                     <td className="border border-gray-200 p-2 flex justify-center">
-                    <img style={{width:100}} src={student.barcode} alt="Barcode" />
-                      </td>
+                      <img
+                        style={{ width: 100 }}
+                        src={student.barcode}
+                        alt="Barcode"
+                      />
+                    </td>
                   </tr>
-
                 ))}
               </tbody>
             </table>
