@@ -117,17 +117,21 @@ const LecturerDashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
-      <div className="max-w-7xl mx-auto bg-white p-4 sm:p-8 rounded-lg shadow-md">
-        <h1 className="text-xl sm:text-2xl font-bold mb-4">
-          Lecturer Dashboard
-        </h1>
+      <div className="max-w-7xl mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-md">
         {lecturer && (
-          <div className="mb-4">
-            <h2 className="text-lg font-bold">Select Course</h2>
+          <h1 className="text-2xl font-bold mb-6 text-center text-blue-500">
+            Welcome {lecturer.fullname}
+          </h1>
+        )}
+        {lecturer && (
+          <div className="mb-6">
+            <h2 className="text-lg font-bold mb-2 text-center">
+              Select Course
+            </h2>
             <select
               value={selectedCourse}
               onChange={handleCourseChange}
-              className="border p-2 rounded mb-4 w-full md:w-[600px]"
+              className="border p-2 rounded w-full md:w-3/4 mx-auto block"
             >
               <option value="">Select Course</option>
               {lecturer.courses.map((course, index) => (
@@ -140,72 +144,78 @@ const LecturerDashboardPage: React.FC = () => {
         )}
         {selectedCourse && (
           <div>
-            <h2 className="text-lg font-bold mb-4">
+            <h2 className="text-lg font-bold mb-4 text-center">
               Students Enrolled in {selectedCourse}
             </h2>
-            <table className="w-full border-collapse border border-gray-200">
-              <thead>
-                <tr>
-                  <th className="border border-gray-200 p-2">S/N</th>
-                  <th className="border border-gray-200 p-2">Full Name</th>
-                  <th className="border border-gray-200 p-2">Level</th>
-                  <th className="border border-gray-200 p-2">Course</th>
-                  <th className="border border-gray-200 p-2">Attendance</th>
-                  <th className="border border-gray-200 p-2">BAR-CODE</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredStudents.map((student, i) => (
-                  <tr key={student.id}>
-                    <td className="border border-gray-200 p-2">{i + 1}</td>
-                    <td className="border border-gray-200 p-2">
-                      {student.fullname}
-                    </td>
-                    <td className="border border-gray-200 p-2">
-                      {student.level}
-                    </td>
-                    <td className="border border-gray-200 p-2">
-                      {student.course}
-                    </td>
-                    <td className="border border-gray-200 p-2">
-                      <input
-                        type="text"
-                        placeholder={`Enter ${student.fullname} Barcode`}
-                        onChange={(e) => setEnteredBarcode(e.target.value)}
-                        className="border p-2 rounded mr-2"
-                      />
-                      <button
-                        onClick={() => markAttendance(student, "Present")}
-                        className="bg-green-500 text-white px-2 py-1 rounded mr-2 hover:bg-green-700 transition duration-200"
-                      >
-                        Present
-                      </button>
-                      <button
-                        onClick={() => markAttendance(student.id, "Absent")}
-                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700 transition duration-200"
-                      >
-                        Absent
-                      </button>
-                      <div className="mt-2">
-                        {getStudentAttendance(student.id)
-                          .split("\n")
-                          .map((line, index) => (
-                            <div key={index}>{line}</div>
-                          ))}
-                      </div>
-                    </td>
-                    <td className="border border-gray-200 p-2 flex justify-center">
-                      <img
-                        style={{ width: 100 }}
-                        src={student.barcode}
-                        alt="Barcode"
-                      />
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-gray-200 text-sm sm:text-base">
+                <thead>
+                  <tr>
+                    <th className="border border-gray-200 p-2">S/N</th>
+                    <th className="border border-gray-200 p-2">Full Name</th>
+                    <th className="border border-gray-200 p-2">Level</th>
+                    <th className="border border-gray-200 p-2">Course</th>
+                    <th className="border border-gray-200 p-2">Attendance</th>
+                    <th className="border border-gray-200 p-2">BAR-CODE</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="mt-4">
+                </thead>
+                <tbody>
+                  {filteredStudents.map((student, i) => (
+                    <tr key={student.id}>
+                      <td className="border border-gray-200 p-2">{i + 1}</td>
+                      <td className="border border-gray-200 p-2">
+                        {student.fullname}
+                      </td>
+                      <td className="border border-gray-200 p-2">
+                        {student.level}
+                      </td>
+                      <td className="border border-gray-200 p-2">
+                        {student.course}
+                      </td>
+                      <td className="border border-gray-200 p-2">
+                        <input
+                          type="text"
+                          placeholder={`Enter ${student.fullname} Barcode`}
+                          onChange={(e) => setEnteredBarcode(e.target.value)}
+                          className="border p-2 rounded w-[200px] md:w-full mb-2"
+                        />
+                        <div className="flex flex-wrap gap-2 justify-center items-center">
+                          <button
+                            onClick={() => markAttendance(student, "Present")}
+                            className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-700 transition duration-200"
+                          >
+                            Present
+                          </button>
+                          <button
+                            onClick={() => markAttendance(student, "Absent")}
+                            className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700 transition duration-200"
+                          >
+                            Absent
+                          </button>
+                        </div>
+                        <div className="mt-2 text-sm text-gray-600 whitespace-pre-line">
+                          {getStudentAttendance(student.id)
+                            .split("\n")
+                            .map((line, index) => (
+                              <div key={index}>{line}</div>
+                            ))}
+                        </div>
+                      </td>
+                      <td className="border border-gray-200 p-2 flex justify-center item-center relative">
+                        <Image
+                          className="w-20 mt-[50%] md:mt-[unset]"
+                          src={student.barcode}
+                          alt="Barcode"
+                          width={100} // Set the width and height explicitly
+                          height={100}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-6 text-center">
               <CSVLink
                 data={csvData}
                 headers={[

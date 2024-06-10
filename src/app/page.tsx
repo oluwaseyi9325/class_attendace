@@ -14,23 +14,27 @@ function Home() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-        <h1 className="text-2xl font-bold mb-4">Welcome</h1>
-        <p className="mb-6">Please select your login type to access the dashboard.</p>
-        <div className="space-y-4">
-          <button
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-50 to-green-50">
+      <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md w-full">
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Welcome</h1>
+        <p className="mb-8 text-gray-600">
+          Please select your login type to access the dashboard.
+        </p>
+        <div className="space-y-6">
+          <div
             onClick={goToAdminLogin}
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-700 transition duration-200 w-full"
+            className="cursor-pointer bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 ease-in-out w-full text-center"
           >
-            Admin Login
-          </button>
-          <button
+            <div className="text-2xl font-semibold mb-2">Admin Login</div>
+            <p className="text-sm">Access admin dashboard</p>
+          </div>
+          <div
             onClick={goToLecturerLogin}
-            className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-700 transition duration-200 w-full"
+            className="cursor-pointer bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 ease-in-out w-full text-center"
           >
-            Lecturer Login
-          </button>
+            <div className="text-2xl font-semibold mb-2">Lecturer Login</div>
+            <p className="text-sm">Access lecturer dashboard</p>
+          </div>
         </div>
       </div>
     </div>
