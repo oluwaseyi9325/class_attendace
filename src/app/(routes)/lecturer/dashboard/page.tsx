@@ -50,9 +50,9 @@ const LecturerDashboardPage: React.FC = () => {
     }
   }, [selectedCourse, students]);
 
-  const markAttendance = (studentId: number, status: "Present" | "Absent") => {
+  const markAttendance = (student: any, status: "Present" | "Absent") => {
     const today = new Date().toLocaleDateString();
-
+   const studentId=student.id
     const existingRecord = attendance.find(
       (record) =>
         record.studentId === studentId &&
@@ -73,8 +73,15 @@ const LecturerDashboardPage: React.FC = () => {
     const updatedAttendance = [...attendance, newAttendance];
     setAttendance(updatedAttendance);
     localStorage.setItem("attendance", JSON.stringify(updatedAttendance));
-
-    Swal.fire("Success", `Marked as ${status}`, "success");
+    Swal.fire({
+      title: "Success!",
+      text: `Marked as ${status}.`,
+      imageUrl: student.barcode,
+      imageWidth: 200,
+      imageHeight: 200,
+      imageAlt: "Custom image"
+    });
+    // Swal.fire("Success", `Marked as ${status}`, "success");
   };
 
   const getStudentAttendance = (studentId: number) => {
@@ -135,7 +142,7 @@ const LecturerDashboardPage: React.FC = () => {
                     <td className="border border-gray-200 p-2">{student.course}</td>
                     <td className="border border-gray-200 p-2">
                       <button
-                        onClick={() => markAttendance(student.id, "Present")}
+                        onClick={() => markAttendance(student, "Present")}
                         className="bg-green-500 text-white px-2 py-1 rounded mr-2 hover:bg-green-700 transition duration-200"
                       >
                         Present
