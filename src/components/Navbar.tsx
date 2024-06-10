@@ -26,7 +26,7 @@ const NavBar: React.FC = () => {
         height={32}
         className="w-9 h-9"
       />
-      <div className="text-lg font-bold">Online Class Attendance</div>
+      <div className="text-[12px] md:text-lg font-bold">Online Class Attendance</div>
     </div>
         <button
           onClick={handleLogout}
