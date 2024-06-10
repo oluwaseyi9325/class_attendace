@@ -29,7 +29,8 @@ const AddStudentModal: React.FC<AddStudentModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      const barcodeValue = uuidv4();  // Generate a unique barcode value
+      // const barcodeValue = uuidv4();  // Generate a unique barcode value
+      const barcodeValue = uuidv4().substring(0, 8);
       const barcodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${barcodeValue}`;
       setBarcode(barcodeUrl);
     }
