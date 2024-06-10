@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Student, Lecturer } from "@/types";
 import { CSVLink } from "react-csv";
 import Swal from "sweetalert2";
+import Image from "next/image";
 
 type Attendance = {
   studentId: number;
@@ -117,15 +118,18 @@ const LecturerDashboardPage: React.FC = () => {
             <table className="w-full border-collapse border border-gray-200">
               <thead>
                 <tr>
+                <th className="border border-gray-200 p-2">S/N</th>
                   <th className="border border-gray-200 p-2">Full Name</th>
                   <th className="border border-gray-200 p-2">Level</th>
                   <th className="border border-gray-200 p-2">Course</th>
                   <th className="border border-gray-200 p-2">Attendance</th>
+                  <th className="border border-gray-200 p-2">BAR-CODE</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredStudents.map((student) => (
+                {filteredStudents.map((student,i) => (
                   <tr key={student.id}>
+                     <td className="border border-gray-200 p-2">{i+1}</td>
                     <td className="border border-gray-200 p-2">{student.fullname}</td>
                     <td className="border border-gray-200 p-2">{student.level}</td>
                     <td className="border border-gray-200 p-2">{student.course}</td>
@@ -148,7 +152,11 @@ const LecturerDashboardPage: React.FC = () => {
                         ))}
                       </div>
                     </td>
+                    <td className="border border-gray-200 p-2 flex justify-center">
+                    <img style={{width:100}} src={student.barcode} alt="Barcode" />
+                      </td>
                   </tr>
+
                 ))}
               </tbody>
             </table>
